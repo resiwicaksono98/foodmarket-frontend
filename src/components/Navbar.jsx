@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Logo from "../assets/icons/Logo.png";
 
 export default function Navbar() {
@@ -18,12 +19,18 @@ export default function Navbar() {
         />
       </div>
       <div className="mt-4 md:mt-0 flex justify-center gap-4 font-yantramanav">
-        <div className="py-1 px-3 bg-white text-secondary text-xl rounded-[8px] cursor-pointer font-semibold hover:bg-lightBlue hover:text-white ">
+        <Link
+          to={"/login"}
+          className="py-1 px-3 bg-white text-secondary text-xl rounded-[8px] cursor-pointer font-semibold hover:bg-lightBlue hover:text-white "
+        >
           Login
-        </div>
-        <div className="py-1 px-3 bg-lightBlue text-white text-xl rounded-[8px] cursor-pointer font-semibold hover:bg-white hover:text-secondary ">
+        </Link>
+        <Link
+          to={"/register"}
+          className="py-1 px-3 bg-lightBlue text-white text-xl rounded-[8px] cursor-pointer font-semibold hover:bg-white hover:text-secondary "
+        >
           Register
-        </div>
+        </Link>
       </div>
     </div>
   );

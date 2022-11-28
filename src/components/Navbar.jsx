@@ -2,6 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Logo from "../assets/icons/Logo.png";
 import Cart from "../assets/icons/Cart-Navbar.png";
+import { Menu } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 export default function Navbar() {
   return (
@@ -40,13 +42,32 @@ export default function Navbar() {
           </div>
           <img src={Cart} alt="" className="h-9" />
         </Link>
-        <div>
-          <img
-            src="https://pbs.twimg.com/profile_images/1392292811790331904/RLBAgHDt_400x400.jpg"
-            alt="profile"
-            className="h-10 w-10 rounded-full cursor-pointer "
-          />
-        </div>
+        <Menu>
+          <Menu.Button className={"flex items-center gap-2"}>
+            {" "}
+            <img
+              src="https://pbs.twimg.com/profile_images/1392292811790331904/RLBAgHDt_400x400.jpg"
+              alt="profile"
+              className="h-10 w-10 rounded-full cursor-pointer "
+            />
+          </Menu.Button>
+          <Menu.Items
+            className={
+              "absolute z-20 flex flex-col top-[4rem] right-2 bg-white text-primary drop-shadow-xl  p-5 w-1/6 rounded-lg shadow-lg "
+            }
+          >
+            <Menu.Item>
+              {({ active }) => (
+                <a
+                  className={`text-lg tracking-wide ${active && "underline"}`}
+                  href="/account-settings"
+                >
+                  Your Address
+                </a>
+              )}
+            </Menu.Item>
+          </Menu.Items>
+        </Menu>
       </div>
     </div>
   );

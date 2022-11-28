@@ -19,8 +19,8 @@ export default function Payment() {
         <div className="border mt-4"></div>
         {/* BCA */}
         <div className="flex items-center justify-between mt-6">
-          <img src={BCA} alt="bca" />
-          <div className="flex-col text-center font-yantramanav text-2xl font-semibold">
+          <img src={BCA} alt="bca" className="h-10 md:h-full" />
+          <div className="flex-col text-center font-yantramanav md:text-2xl font-semibold">
             <div>726382736</div>
             <div>An. Resi Wicaksono</div>
           </div>
@@ -28,8 +28,8 @@ export default function Payment() {
         <div className="border mt-4 "></div>
         {/* BNI */}
         <div className="flex items-center justify-between mt-6">
-          <img src={BNI} alt="bni" />
-          <div className="flex-col text-center font-yantramanav text-2xl font-semibold">
+          <img src={BNI} alt="bni" className="h-10 md:h-full" />
+          <div className="flex-col text-center font-yantramanav md:text-2xl font-semibold">
             <div>2121232323</div>
             <div>An. Resi Wicaksono</div>
           </div>
@@ -37,8 +37,8 @@ export default function Payment() {
         <div className="border mt-4 "></div>
         {/* Mandiri */}
         <div className="flex items-center justify-between mt-6">
-          <img src={MANDIRI} alt="mandiri" />
-          <div className="flex-col text-center font-yantramanav text-2xl font-semibold">
+          <img src={MANDIRI} alt="mandiri" className="h-10 md:h-full" />
+          <div className="flex-col text-center font-yantramanav md:text-2xl font-semibold">
             <div>100009823728</div>
             <div>An. Resi Wicaksono</div>
           </div>

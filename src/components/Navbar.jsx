@@ -3,12 +3,29 @@ import { Link } from "react-router-dom";
 import Logo from "../assets/icons/Logo.png";
 import Cart from "../assets/icons/Cart-Navbar.png";
 import { Menu } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { motion } from "framer-motion";
 
 export default function Navbar() {
   return (
     <div className="md:flex p-4  items-center justify-between text-white bg-primary ">
-      <div className=" md:flex  items-center">
+      {/* Logo */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          default: {
+            duration: 0.3,
+            ease: [0, 0.71, 0.2, 1.01],
+          },
+          scale: {
+            type: "spring",
+            damping: 5,
+            stiffness: 100,
+            restDelta: 0.001,
+          },
+        }}
+        className=" md:flex  items-center"
+      >
         <Link
           to={"/"}
           className="flex items-center w-full justify-center font-yantramanav gap-4 cursor-pointer"
@@ -18,9 +35,9 @@ export default function Navbar() {
             Wak Burger Bar
           </div>
         </Link>
-      </div>
+      </motion.div>
       {/* Login And Register */}
-      <div className="mt-4 md:mt-0 flex justify-center gap-4 font-yantramanav hidden">
+      <div className="mt-4 md:mt-0 flex justify-center gap-4 font-yantramanav ">
         <Link
           to={"/login"}
           className="py-1 px-3 bg-white text-secondary text-xl rounded-[8px] cursor-pointer font-semibold hover:bg-lightBlue hover:text-white  "
@@ -35,7 +52,7 @@ export default function Navbar() {
         </Link>
       </div>
       {/* Profile And Cart */}
-      <div className="mt-4 md:mt-0 flex justify-center items-center gap-4 font-yantramanav  ">
+      <div className="mt-4 md:mt-0 flex justify-center items-center gap-4 font-yantramanav hidden ">
         <Link to={"/cart"}>
           <div className="absolute ml-5 -mt-1 h-5 w-5 bg-lightBlue rounded-full text-center text-sm ">
             1
@@ -62,7 +79,7 @@ export default function Navbar() {
                   className={`text-lg tracking-wide ${active && "underline"}`}
                   href="/account-settings"
                 >
-                  Your Address
+                  Account Settings
                 </a>
               )}
             </Menu.Item>

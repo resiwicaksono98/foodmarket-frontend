@@ -7,6 +7,7 @@ import BurgerIcon from "../assets/icons/Burger.png";
 import HotdogIcon from "../assets/icons/HotDog.png";
 import DrinkIcon from "../assets/icons/Drink.png";
 import OtherIcon from "../assets/icons/Other.png";
+import { domAnimation, LazyMotion, motion } from "framer-motion";
 
 export default function Home() {
   const categories = [
@@ -61,7 +62,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className=" bg-primary rounded-lg text-white  max-w-[20rem] drop-shadow-[0px_0px_8px_#007EA7]  ">
+            <div className=" bg-primary rounded-lg text-white  md:max-w-[20rem] drop-shadow-[0px_0px_8px_#007EA7]  ">
               <img
                 src={Hotdog1}
                 alt=""
@@ -84,7 +85,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className=" bg-primary rounded-lg text-white  max-w-[20rem] drop-shadow-[0px_0px_8px_#007EA7]  ">
+            <div className=" bg-primary rounded-lg text-white  md:max-w-[20rem] drop-shadow-[0px_0px_8px_#007EA7]  ">
               <img
                 src={Burger2}
                 alt=""

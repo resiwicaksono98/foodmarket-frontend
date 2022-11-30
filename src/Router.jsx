@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, useNavigate } from "react-router-dom";
 import Sidebar from "./components/account/Sidebar";
 import Address from "./components/account/Address";
 import Login from "./components/Login";
@@ -10,11 +10,37 @@ import Order from "./pages/Order";
 import PaymentUser from "./pages/PaymentUser";
 import Profile from "./components/account/Profile";
 import NewAddress from "./components/account/NewAddress";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { checkUserLogin } from "./features/authSlice";
 
+const Auth = ({ children }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isLoading } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    dispatch(checkUserLogin());
+  }, [dispatch]);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center animate-spin">
+        Loading....
+      </div>
+    );
+  }
+
+  return <div>{children}</div>;
+};
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Homepage />,
+    element: (
+      <Auth>
+        <Homepage />
+      </Auth>
+    ),
   },
   //   auth
   {
@@ -28,21 +54,37 @@ const router = createBrowserRouter([
   //   Orders
   {
     path: "/cart",
-    element: <Order />,
+    element: (
+      <Auth>
+        <Order />,
+      </Auth>
+    ),
   },
   {
     path: "/payment/:id",
-    element: <PaymentUser />,
+    element: (
+      <Auth>
+        <PaymentUser />
+      </Auth>
+    ),
   },
   {
     path: "/invoice/:id",
-    element: <InvoiceOrder />,
+    element: (
+      <Auth>
+        <InvoiceOrder />
+      </Auth>
+    ),
   },
   //   Accoutn Setting
   {
     path: "/account-settings",
 
-    element: <AccountSetting />,
+    element: (
+      <Auth>
+        <AccountSetting />
+      </Auth>
+    ),
     children: [
       { path: "", element: <Profile /> },
       {

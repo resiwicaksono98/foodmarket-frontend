@@ -1,11 +1,26 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/icons/Logo.png";
 import Cart from "../assets/icons/Cart-Navbar.png";
 import { Menu } from "@headlessui/react";
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
+import { authRequest } from "../utils/axiosInstance";
 
 export default function Navbar() {
+  const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+
+  const logoutUser = async () => {
+    try {
+      await authRequest.post("/logout");
+      alert("Logout Success");
+      navigate(0);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="md:flex p-4  items-center justify-between text-white bg-primary ">
       {/* Logo */}
@@ -37,7 +52,11 @@ export default function Navbar() {
         </Link>
       </motion.div>
       {/* Login And Register */}
-      <div className="mt-4 md:mt-0 flex justify-center gap-4 font-yantramanav ">
+      <div
+        className={`mt-4 md:mt-0 flex justify-center gap-4 font-yantramanav ${
+          user ? "hidden" : ""
+        }`}
+      >
         <Link
           to={"/login"}
           className="py-1 px-3 bg-white text-secondary text-xl rounded-[8px] cursor-pointer font-semibold hover:bg-lightBlue hover:text-white  "
@@ -52,7 +71,11 @@ export default function Navbar() {
         </Link>
       </div>
       {/* Profile And Cart */}
-      <div className="mt-4 md:mt-0 flex justify-center items-center gap-4 font-yantramanav hidden ">
+      <div
+        className={`mt-4 md:mt-0 flex justify-center items-center gap-4 font-yantramanav ${
+          !user ? "hidden" : ""
+        }`}
+      >
         <Link to={"/cart"}>
           <div className="absolute ml-5 -mt-1 h-5 w-5 bg-lightBlue rounded-full text-center text-sm ">
             1
@@ -75,12 +98,27 @@ export default function Navbar() {
           >
             <Menu.Item>
               {({ active }) => (
-                <a
-                  className={`text-lg tracking-wide ${active && "underline"}`}
-                  href="/account-settings"
+                <Link
+                  className={`text-lg text-center tracking-wide ${
+                    active && "underline"
+                  }`}
+                  to="/account-settings"
                 >
                   Account Settings
-                </a>
+                </Link>
+              )}
+            </Menu.Item>
+            <div className="border my-2"></div>
+            <Menu.Item>
+              {({ active }) => (
+                <div
+                  className={`text-lg text-center tracking-wide cursor-pointer  ${
+                    active && "underline"
+                  }`}
+                  onClick={logoutUser}
+                >
+                  Logout
+                </div>
               )}
             </Menu.Item>
           </Menu.Items>

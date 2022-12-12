@@ -4,12 +4,20 @@ import Logo from "../assets/icons/Logo.png";
 import Cart from "../assets/icons/Cart-Navbar.png";
 import { Menu } from "@headlessui/react";
 import { motion } from "framer-motion";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { authRequest } from "../utils/axiosInstance";
+import { useEffect } from "react";
+import { getCurrentCart } from "../features/cartSlice";
 
 export default function Navbar() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+  const { countOrder } = useSelector((state) => state.cart);
+
+  useEffect(() => {
+    dispatch(getCurrentCart());
+  }, []);
 
   const logoutUser = async () => {
     try {
@@ -78,7 +86,7 @@ export default function Navbar() {
       >
         <Link to={"/cart"}>
           <div className="absolute ml-5 -mt-1 h-5 w-5 bg-lightBlue rounded-full text-center text-sm ">
-            1
+            {countOrder ? countOrder : 0}
           </div>
           <img src={Cart} alt="" className="h-9" />
         </Link>
@@ -91,11 +99,26 @@ export default function Navbar() {
               className="h-10 w-10 rounded-full cursor-pointer "
             />
           </Menu.Button>
+          {/* Menu Items */}
           <Menu.Items
             className={
               "absolute z-20 flex flex-col top-[4rem] right-2 bg-white text-primary drop-shadow-xl  p-5 w-1/6 rounded-lg shadow-lg "
             }
           >
+            {/* My orders */}
+            <Menu.Item>
+              {({ active }) => (
+                <Link
+                  className={`text-lg text-center tracking-wide ${
+                    active && "underline"
+                  }`}
+                  to="/my-order"
+                >
+                  My Orders
+                </Link>
+              )}
+            </Menu.Item>
+            {/* Account Settings */}
             <Menu.Item>
               {({ active }) => (
                 <Link
@@ -109,6 +132,7 @@ export default function Navbar() {
               )}
             </Menu.Item>
             <div className="border my-2"></div>
+            {/* Logout */}
             <Menu.Item>
               {({ active }) => (
                 <div

@@ -1,5 +1,4 @@
 import { createBrowserRouter, useNavigate } from "react-router-dom";
-import Sidebar from "./components/account/Sidebar";
 import Address from "./components/account/Address";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -10,36 +9,18 @@ import Order from "./pages/Order";
 import PaymentUser from "./pages/PaymentUser";
 import Profile from "./components/account/Profile";
 import NewAddress from "./components/account/NewAddress";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { checkUserLogin } from "./features/authSlice";
+import DeliveryAddress from "./pages/DeliveryAddress";
+import { AuthMiddleware } from "./middleware/AuthMiddleware";
+import CartMiddleware from "./middleware/CartMiddleware";
+import MyOrder from "./pages/MyOrder";
 
-const Auth = ({ children }) => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { isLoading } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    dispatch(checkUserLogin());
-  }, [dispatch]);
-
-  if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center animate-spin">
-        Loading....
-      </div>
-    );
-  }
-
-  return <div>{children}</div>;
-};
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <Auth>
+      <AuthMiddleware>
         <Homepage />
-      </Auth>
+      </AuthMiddleware>
     ),
   },
   //   auth
@@ -55,25 +36,45 @@ const router = createBrowserRouter([
   {
     path: "/cart",
     element: (
-      <Auth>
+      <AuthMiddleware>
         <Order />,
-      </Auth>
+      </AuthMiddleware>
     ),
   },
   {
-    path: "/payment/:id",
+    path: "/delivery-address",
     element: (
-      <Auth>
-        <PaymentUser />
-      </Auth>
+      <AuthMiddleware>
+        <CartMiddleware>
+          <DeliveryAddress />
+        </CartMiddleware>
+      </AuthMiddleware>
     ),
   },
   {
-    path: "/invoice/:id",
+    path: "/payment",
     element: (
-      <Auth>
+      <AuthMiddleware>
+        <CartMiddleware>
+          <PaymentUser />
+        </CartMiddleware>
+      </AuthMiddleware>
+    ),
+  },
+  {
+    path: "/invoice/:order_id",
+    element: (
+      <AuthMiddleware>
         <InvoiceOrder />
-      </Auth>
+      </AuthMiddleware>
+    ),
+  },
+  {
+    path: "/my-order",
+    element: (
+      <AuthMiddleware>
+        <MyOrder />
+      </AuthMiddleware>
     ),
   },
   //   Accoutn Setting
@@ -81,9 +82,9 @@ const router = createBrowserRouter([
     path: "/account-settings",
 
     element: (
-      <Auth>
+      <AuthMiddleware>
         <AccountSetting />
-      </Auth>
+      </AuthMiddleware>
     ),
     children: [
       { path: "", element: <Profile /> },

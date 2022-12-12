@@ -1,15 +1,36 @@
 import React from "react";
+import { useEffect } from "react";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import instanceRequest from "../utils/axiosInstance";
 import Button from "./atom/Button";
 import NavigateBack from "./atom/NavigateBack";
 
 export default function Invoice() {
+  const { order_id } = useParams();
+  const navigate = useNavigate();
+  const [invoices, setInvoices] = useState([]);
+  const { payment_status, order, total, user, delivery_address } = invoices;
+  console.log(invoices);
+
+  useEffect(() => {
+    const getInvoice = async () => {
+      try {
+        const response = await instanceRequest.get(`/invoice/${order_id}`);
+        setInvoices(response.data);
+      } catch (error) {
+        navigate("/");
+      }
+    };
+    getInvoice();
+  }, [order_id]);
   return (
     <div className="my-8 mx-8">
       {/* Nav back and title */}
       <div className="md:flex gap-4 md:gap-[12rem] items-center font-yantramanav text-primary">
         <NavigateBack to={"/"} classname={"justify-center"} />
         <div className="text-3xl font-merriweatherSans mt-2 md:ml-10 font-semibold md:w-3/6 text-center">
-          Invoice
+          Invoice Your Order
         </div>
       </div>
       <div className="md:flex justify-center mt-8 text-white ">
@@ -20,7 +41,7 @@ export default function Invoice() {
               Status Payment
             </div>
             <div className="bg-lightBlue py-2 px-4  rounded-lg text-xl ">
-              Waiting Payment
+              {payment_status}
             </div>
           </div>
           <div className="border my-8"></div>
@@ -30,7 +51,7 @@ export default function Invoice() {
               Order Id
             </div>
             <div className="  text-xl font-semibold text-slate-300   ">
-              #2003
+              #{order?.order_number}
             </div>
           </div>
           <div className="border my-8"></div>
@@ -40,7 +61,7 @@ export default function Invoice() {
               Total Amount
             </div>
             <div className="  text-xl font-semibold text-slate-300   ">
-              IDR. 100.000
+              IDR. {total}
             </div>
           </div>
           <div className="border my-8"></div>
@@ -50,11 +71,14 @@ export default function Invoice() {
               Billed To
             </div>
             <div className="md:text-end text-slate-300 ">
-              <div className=" text-xl font-semibold">Bunga Kurnia</div>
-              <div className="">Bunga@gmail.com</div>
+              <div className=" text-xl font-semibold">
+                {delivery_address?.fullname}
+              </div>
+              <div className="">{user?.email}</div>
               <div className=" max-w-xs">
-                Jawa Barat, Bogor , Gunung Sindur, Padurenan, Jl Pahlawan 99 No
-                69
+                {delivery_address?.provinsi} , {delivery_address?.kabupaten} ,
+                {delivery_address?.kecamatan} , {delivery_address?.kelurahan} ,{" "}
+                {delivery_address?.detail}
               </div>
             </div>
           </div>

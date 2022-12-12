@@ -5,13 +5,42 @@ import BNI from "../assets/images/BNI.png";
 import MANDIRI from "../assets/images/MANDIRI.png";
 import AddImage from "../assets/icons/AddImage.png";
 import Button from "./atom/Button";
+import { useState } from "react";
+import instanceRequest from "../utils/axiosInstance";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { resetCart } from "../features/cartSlice";
 
 export default function Payment() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [preview, setPreview] = useState();
+  const { shipping, address } = useSelector((state) => state.cart);
+
+  if (!address) {
+    return navigate("/delivery-address");
+  }
+
+  const handlePayment = async () => {
+    try {
+      const response = await instanceRequest.post(`/orders`, {
+        delvery_fee: shipping,
+        delivery_address: address,
+      });
+      if (response.status === 200) {
+        alert("Order Success");
+        navigate(`/invoice/${response.data._id}`);
+        dispatch(resetCart());
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="mx-8 py-8">
-      <div className="flex items-center gap-12">
-        <NavigateBack to={"/cart"} />
-        <div className="font-merriweatherSans text-3xl font-semibold">
+      <div className="flex items-center">
+        <NavigateBack to={"/delivery-address"} />
+        <div className=" flex-1 ml-6 md:ml-0 text-center font-yantramanav text-2xl font-medium tracking-wider">
           Payment
         </div>
       </div>
@@ -45,15 +74,29 @@ export default function Payment() {
         </div>
         {/* Add Image */}
         <div className="flex items-center gap-6 mt-16">
-          <img src={AddImage} alt="addImage" className="h-16 w-16" />
-          <div className=" font-semibold text-primary">
-            Upload Proof Of Transfer
-          </div>
+          <label htmlFor="upload-photo" className="cursor-pointer">
+            <img src={AddImage} alt="addImage" className="h-16 w-16" />
+          </label>
+          <input
+            type="file"
+            className="absolute invisible"
+            id="upload-photo"
+            onChange={(e) => {
+              setPreview(URL.createObjectURL(e.target.files[0]));
+            }}
+          />
+          {!preview ? (
+            <div className=" font-semibold text-primary ">
+              Upload Proof Of Transfer
+            </div>
+          ) : (
+            <img src={preview} alt="" className="ml-6 max-h-28  rounded-lg " />
+          )}
         </div>
         <Button
-          name={"Complete Orders"}
-          to={"/invoice/3232"}
+          name={"Create Order"}
           classname={"mt-10"}
+          onClick={handlePayment}
         />
       </div>
     </div>

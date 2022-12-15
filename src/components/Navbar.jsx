@@ -13,10 +13,12 @@ export default function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-  const { countOrder } = useSelector((state) => state.cart);
+  const { countOrder, items } = useSelector((state) => state.cart);
 
   useEffect(() => {
-    dispatch(getCurrentCart());
+    if (items.length === 0) {
+      dispatch(getCurrentCart());
+    }
   }, []);
 
   const logoutUser = async () => {

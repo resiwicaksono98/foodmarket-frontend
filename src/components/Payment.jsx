@@ -10,6 +10,7 @@ import instanceRequest from "../utils/axiosInstance";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { resetCart } from "../features/cartSlice";
+import { Toast } from "./atom/Toast";
 
 export default function Payment() {
   const navigate = useNavigate();
@@ -24,11 +25,11 @@ export default function Payment() {
   const handlePayment = async () => {
     try {
       const response = await instanceRequest.post(`/orders`, {
-        delvery_fee: shipping,
+        delivery_fee: shipping,
         delivery_address: address,
       });
       if (response.status === 200) {
-        alert("Order Success");
+        Toast({ message: "Order success created", type: "success" });
         navigate(`/invoice/${response.data._id}`);
         dispatch(resetCart());
       }

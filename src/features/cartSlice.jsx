@@ -66,11 +66,16 @@ export const cartSlice = createSlice({
       state.address = null;
       cartEntitiy.getInitialState();
     },
+    resetMessage(state) {
+      state.message = null;
+    },
     addToCart(state, action) {
-      const checkid = state.ids.find((id) => id === action.payload.order._id);
+      const checkid = state.items.find(
+        (item) => item.product._id === action.payload.order._id
+      );
       if (checkid) {
         state.message = {
-          error: 1,
+          status: "error",
           message: `${action.payload.order.name} is already in cart`,
         };
         return undefined;
@@ -78,29 +83,33 @@ export const cartSlice = createSlice({
       state.countOrder = state.countOrder + action.payload.counter;
       state.ids.push(action.payload.order._id);
       state.items.push({
-        qty: action.payload.qty,
         product: action.payload.order,
+        ...action.payload.order,
+        qty: 1,
+        price: action.payload.order.price,
       });
-      state.subTotal = state.items.reduce(
-        (sum, item) => sum + item.product.price,
-        0
-      );
+      state.message = {
+        status: "success",
+        message: `${action.payload.order.name} added in cart`,
+      };
+      state.subTotal = state.items.reduce((sum, item) => sum + item.price, 0);
     },
     incrementCart(state, action) {
       state.items.map((item) => {
-        item.product._id === action.payload.id ? (item.qty += 1) : "";
+        item._id === action.payload.id ? (item.qty += 1) : "";
         state.message = `Success Add value ${action.payload.name}`;
-        item.price = item.qty * item.product.price;
+        item.price = item.product.price * item.qty;
       });
     },
     decrementCart(state, action) {
       state.items.map((item) => {
-        item.product._id === action.payload.id
+        item._id === action.payload.id
           ? item.qty <= 1
             ? false
             : (item.qty -= 1)
           : "";
-        item.price = item.qty * item.product.price;
+        item.price =
+          item.qty === 1 ? item.price : item.product.price * item.qty;
       });
     },
     addAddress(state, action) {
@@ -110,7 +119,11 @@ export const cartSlice = createSlice({
   extraReducers: (builder) => {
     // Update Cart
     builder.addCase(updateCart.fulfilled, (state, action) => {
-      cartEntitiy.setAll(state, action.payload);
+      state.message = {
+        status: "success",
+        message: "Success save your orders",
+      };
+      //   cartEntitiy.setAll(state, action.payload);
     });
     builder.addCase(updateCart.rejected, (state, action) => {
       state.message = action.payload;
@@ -119,12 +132,15 @@ export const cartSlice = createSlice({
     builder.addCase(getCurrentCart.pending, (state, action) => {
       state.message = "Loading....";
       state.isLoading = true;
-    }),
-      builder.addCase(getCurrentCart.fulfilled, (state, action) => {
-        state.items = action.payload;
-        state.countOrder = action.payload.length;
-        state.isLoading = false;
+    });
+    builder.addCase(getCurrentCart.fulfilled, (state, action) => {
+      state.items = action.payload;
+      state.items.map((item) => {
+        item.price = item.product.price * item.qty;
       });
+      state.countOrder = action.payload.length;
+      state.isLoading = false;
+    });
     builder.addCase(getCurrentCart.rejected, (state, action) => {
       state.isLoading = false;
       state.isErrors = true;
@@ -138,5 +154,6 @@ export const {
   addToCart,
   addAddress,
   resetCart,
+  resetMessage,
 } = cartSlice.actions;
 export default cartSlice.reducer;

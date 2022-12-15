@@ -14,14 +14,18 @@ import {
 import CartNull from "./CartNull";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Toast } from "./atom/Toast";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Cart() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { items, subTotal, isLoading, shipping } = useSelector(
+  const { items, subTotal, isLoading, shipping, message } = useSelector(
     (state) => state.cart
   );
-  const newSubTotal = items.reduce((sum, item) => sum + item.price, 0);
+
+  const newSubTotal = items.reduce((prev, curr) => prev + curr.price, 0);
   const total = newSubTotal ? newSubTotal + shipping : subTotal + shipping;
 
   useEffect(() => {
@@ -31,8 +35,14 @@ export default function Cart() {
   }, []);
 
   const handleSubmit = async () => {
-    dispatch(updateCart(items));
-    navigate(`/delivery-address`);
+    dispatch(updateCart(items)).then((data) => {
+      if (data.payload) {
+        Toast({ type: "success", message: "Success save your order" });
+        setTimeout(() => {
+          navigate(`/delivery-address`);
+        }, 1500);
+      }
+    });
   };
 
   if (isLoading) {
@@ -47,10 +57,11 @@ export default function Cart() {
     <>
       {items.length !== 0 ? (
         <div className="mx-8 py-8">
+          <ToastContainer />
           {/* Back and address */}
-          <div className="md:flex gap-4  items-center font-yantramanav text-primary">
+          <div className="md:flex gap-4   py-5 items-center font-yantramanav text-primary">
             <NavigateBack to={"/"} classname={"justify-center"} />
-            <div className="text-3xl font-semibold text-center mt-7 md:mt-0 md:pl-[28rem]  tracking-wider">
+            <div className="text-3xl font-semibold text-center mt-3 md:mt-0 w-full  tracking-wider">
               Your Order
             </div>
           </div>
@@ -65,8 +76,8 @@ export default function Cart() {
                 onClick={() =>
                   dispatch(
                     incrementCart({
-                      id: item.product._id,
-                      name: item.product.name,
+                      id: item._id,
+                      name: item.name,
                     })
                   )
                 }
@@ -84,22 +95,21 @@ export default function Cart() {
                     {item.qty}
                   </div>
                   <img
-                    src={`http://localhost:3000/images/products/${item.product.image_url}`}
+                    src={`http://localhost:3000/images/products/${item.image_url}`}
                     alt="burger1"
                     className="h-20 w-20 rounded-lg"
                   />
                 </div>
                 <div className="flex-col  text-center">
                   <div className="mb-2 md:mb-4 font-yantramanav font-semibold text-xl">
-                    {item?.product?.name}
+                    {item.name}
                   </div>
                   <div className="font-biryani mb-2 md:mb-0 text-sm text-slate-500">
                     Note: Extra pedas
                   </div>
                 </div>
                 <div className="font-yantramanav font-semibold text-xl text-primary text-center md:ml-[2rem]">
-                  IDR. {item.product.price}{" "}
-                  <span className="text-black">x {item.qty}</span>
+                  IDR. {item.product.price * item.qty}{" "}
                 </div>
               </div>
               {/* Counter Remove */}
@@ -107,8 +117,8 @@ export default function Cart() {
                 onClick={() =>
                   dispatch(
                     decrementCart({
-                      id: item.product._id,
-                      name: item.product.name,
+                      id: item._id,
+                      name: item.name,
                     })
                   )
                 }
@@ -123,7 +133,7 @@ export default function Cart() {
           ))}
 
           {/* Total Price */}
-          <div className="mt-12 md:mx-[20rem]">
+          <div className="mt-12 lg:mx-[20rem]">
             <div className="border"></div>
             {/* Subtotal */}
             <div className="px-16 pt-10 flex justify-between font-yantramanav text-xl font-semibold ">

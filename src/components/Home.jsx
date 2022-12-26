@@ -18,6 +18,8 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Toast } from "./atom/Toast";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -102,9 +104,10 @@ export default function Home() {
                 className=" bg-primary rounded-lg text-white   md:max-w-[20rem] drop-shadow-[0px_0px_8px_#007EA7] "
                 key={product._id}
               >
-                <img
+                <LazyLoadImage
                   src={`http://localhost:3000/images/products/${product.image_url}`}
                   alt=""
+                  effect="blur"
                   className=" md:h-[16rem] rounded-lg w-full"
                 />
                 <div className="p-6 font-yantramanav">

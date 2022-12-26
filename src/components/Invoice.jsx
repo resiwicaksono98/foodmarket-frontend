@@ -10,9 +10,9 @@ export default function Invoice() {
   const { order_id } = useParams();
   const navigate = useNavigate();
   const [invoices, setInvoices] = useState([]);
+  const [payments, setPayments] = useState([]);
   const { payment_status, order, total, user, delivery_address } = invoices;
-  console.log(invoices);
-
+  const { va_numbers } = payments;
   useEffect(() => {
     const getInvoice = async () => {
       try {
@@ -22,7 +22,12 @@ export default function Invoice() {
         navigate("/");
       }
     };
+    const getPayment = async () => {
+      const response = await instanceRequest.get(`/payment/${order_id}`);
+      setPayments(response.data);
+    };
     getInvoice();
+    getPayment();
   }, [order_id]);
   return (
     <div className="my-8 mx-8">
@@ -89,12 +94,14 @@ export default function Invoice() {
               Payment To
             </div>
             <div className="md:text-end text-slate-300 ">
-              <div className=" text-xl font-semibold">Resi Wicaksono</div>
-              <div>resiwicaksono@gmail.com</div>
-              <div className="0 flex gap-4 md:justify-end">
-                <div>BCA</div>
-                <div>xxx-xxx-xxx-669</div>
-              </div>
+              <div className=" text-xl font-semibold">Midtrans Payment</div>
+              <div>Virtual Account</div>
+              {va_numbers?.map((va, i) => (
+                <div className=" flex gap-4 md:justify-end" key={i}>
+                  <div>{va.bank.toUpperCase()}</div>
+                  <div>{va.va_number}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

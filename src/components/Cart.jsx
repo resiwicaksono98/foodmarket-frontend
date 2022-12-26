@@ -37,7 +37,7 @@ export default function Cart() {
   const handleSubmit = async () => {
     dispatch(updateCart(items)).then((data) => {
       if (data.payload) {
-        Toast({ type: "success", message: "Success save your order" });
+        Toast({ type: "success", message: "Success save your cart" });
         setTimeout(() => {
           navigate(`/delivery-address`);
         }, 1500);

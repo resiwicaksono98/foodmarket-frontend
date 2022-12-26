@@ -112,9 +112,6 @@ export const cartSlice = createSlice({
           item.qty === 1 ? item.price : item.product.price * item.qty;
       });
     },
-    addAddress(state, action) {
-      state.address = action.payload.id;
-    },
   },
   extraReducers: (builder) => {
     // Update Cart

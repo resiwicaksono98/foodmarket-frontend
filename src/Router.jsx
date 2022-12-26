@@ -52,12 +52,10 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/payment",
+    path: "/payment/:orderId",
     element: (
       <AuthMiddleware>
-        <CartMiddleware>
-          <PaymentUser />
-        </CartMiddleware>
+        <PaymentUser />
       </AuthMiddleware>
     ),
   },

@@ -1,16 +1,20 @@
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { addAddress } from "../features/cartSlice";
+import { addAddress, resetCart } from "../features/cartSlice";
 import instanceRequest from "../utils/axiosInstance";
 import NavigateBack from "./atom/NavigateBack";
+import { Toast } from "./atom/Toast";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 export default function SelectAddress() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [addresses, setAddresses] = useState([]);
+  const { shipping } = useSelector((state) => state.cart);
 
   useEffect(() => {
     const getAddress = async () => {
@@ -19,8 +23,26 @@ export default function SelectAddress() {
     };
     getAddress();
   }, []);
+
+  const handleOrder = async ({ idAddress }) => {
+    try {
+      const response = await instanceRequest.post(`/orders`, {
+        delivery_fee: shipping,
+        delivery_address: idAddress,
+      });
+      console.log(response);
+      Toast({ message: "Order created", type: "success" });
+      setTimeout(() => {
+        navigate(`/payment/${response.data._id}`);
+        dispatch(resetCart());
+      }, 1500);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="mx-8 py-8">
+      <ToastContainer />
       {/* Navigate and title */}
       <div className="flex items-center">
         <NavigateBack to={"/cart"} />
@@ -50,10 +72,7 @@ export default function SelectAddress() {
                 </td>
                 <td className="border border-slate-300 py-2 px-2">
                   <button
-                    onClick={() => {
-                      dispatch(addAddress({ id: address._id }));
-                      navigate("/payment");
-                    }}
+                    onClick={(e) => handleOrder({ idAddress: address._id })}
                     className="bg-primary py-2 px-2 rounded-lg text-white hover:bg-secondary"
                   >
                     Select Address

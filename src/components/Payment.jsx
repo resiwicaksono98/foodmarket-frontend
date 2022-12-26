@@ -1,103 +1,81 @@
-import React from "react";
-import NavigateBack from "./atom/NavigateBack";
-import BCA from "../assets/images/BCA.png";
-import BNI from "../assets/images/BNI.png";
-import MANDIRI from "../assets/images/MANDIRI.png";
-import AddImage from "../assets/icons/AddImage.png";
-import Button from "./atom/Button";
 import { useState } from "react";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import instanceRequest from "../utils/axiosInstance";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { resetCart } from "../features/cartSlice";
-import { Toast } from "./atom/Toast";
+import Button from "./atom/Button";
 
 export default function Payment() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [preview, setPreview] = useState();
-  const { shipping, address } = useSelector((state) => state.cart);
+  const { orderId } = useParams();
+  const [payment, setPayment] = useState();
 
-  if (!address) {
-    return navigate("/delivery-address");
+  if (!payment) {
+    <div>Loading.....</div>;
   }
 
-  const handlePayment = async () => {
-    try {
-      const response = await instanceRequest.post(`/orders`, {
-        delivery_fee: shipping,
-        delivery_address: address,
-      });
-      if (response.status === 200) {
-        Toast({ message: "Order success created", type: "success" });
-        navigate(`/invoice/${response.data._id}`);
-        dispatch(resetCart());
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  useEffect(() => {
+    const getPayment = async () => {
+      const response = await instanceRequest.get(`/payment/${orderId}`);
+      setPayment(response.data);
+    };
+    getPayment();
+  }, [orderId]);
   return (
     <div className="mx-8 py-8">
-      <div className="flex items-center">
-        <NavigateBack to={"/delivery-address"} />
-        <div className=" flex-1 ml-6 md:ml-0 text-center font-yantramanav text-2xl font-medium tracking-wider">
-          Payment
+      <div className="flex-1 ml-6 md:ml-0 text-center font-yantramanav text-2xl font-medium tracking-wider">
+        Your Transaction Payment
+      </div>
+      {/* Details */}
+      <div className="md:p-12 py-12 flex gap-6 flex-wrap md:gap-28 font-yantramanav">
+        {/* Transaction time */}
+        <div className="flex flex-col gap-1 text-xl text-center ">
+          <div className=" font-semibold">Transaction Time </div>
+          <div className="">{payment?.transaction_time}</div>
+        </div>
+        {/* Type Payment */}
+        <div className="flex flex-col gap-1 text-xl text-center ">
+          <div className=" font-semibold">Payment Type </div>
+          <div className="">{payment?.payment_type}</div>
+        </div>
+        {/* Currency */}
+        <div className="flex flex-col gap-1 text-xl text-center ">
+          <div className=" font-semibold">Currency </div>
+          <div className="">{payment?.currency}</div>
+        </div>
+        {/* Total Payment */}
+        <div className="flex flex-col gap-1 text-xl text-center ">
+          <div className=" font-semibold">Total Payment </div>
+          <div className="">{payment?.gross_amount}</div>
+        </div>
+        {/* Transaction status */}
+        <div className="flex flex-col gap-1 text-xl text-center ">
+          <div className=" font-semibold">Transaction Status </div>
+          <div className="bg-green-500 py-2 text-white rounded-lg">
+            {payment?.transaction_status}
+          </div>
         </div>
       </div>
-      <div className="md:mx-28">
-        <div className="border mt-4"></div>
-        {/* BCA */}
-        <div className="flex items-center justify-between mt-6">
-          <img src={BCA} alt="bca" className="h-10 md:h-full" />
-          <div className="flex-col text-center font-yantramanav md:text-2xl font-semibold">
-            <div>726382736</div>
-            <div>An. Resi Wicaksono</div>
-          </div>
-        </div>
-        <div className="border mt-4 "></div>
-        {/* BNI */}
-        <div className="flex items-center justify-between mt-6">
-          <img src={BNI} alt="bni" className="h-10 md:h-full" />
-          <div className="flex-col text-center font-yantramanav md:text-2xl font-semibold">
-            <div>2121232323</div>
-            <div>An. Resi Wicaksono</div>
-          </div>
-        </div>
-        <div className="border mt-4 "></div>
-        {/* Mandiri */}
-        <div className="flex items-center justify-between mt-6">
-          <img src={MANDIRI} alt="mandiri" className="h-10 md:h-full" />
-          <div className="flex-col text-center font-yantramanav md:text-2xl font-semibold">
-            <div>100009823728</div>
-            <div>An. Resi Wicaksono</div>
-          </div>
-        </div>
-        {/* Add Image */}
-        <div className="flex items-center gap-6 mt-16">
-          <label htmlFor="upload-photo" className="cursor-pointer">
-            <img src={AddImage} alt="addImage" className="h-16 w-16" />
-          </label>
-          <input
-            type="file"
-            className="absolute invisible"
-            id="upload-photo"
-            onChange={(e) => {
-              setPreview(URL.createObjectURL(e.target.files[0]));
-            }}
-          />
-          {!preview ? (
-            <div className=" font-semibold text-primary ">
-              Upload Proof Of Transfer
+      {/* VA Bank */}
+      <div className="md:p-12 mb-4">
+        <div>
+          <div className="text-2xl mb-2">Pay To </div>
+          <div className="flex flex-col gap-1 text-xl text-center bg-gradient-to-br from-blue-700 to-blue-500 p-6 text-white rounded-md tracking-widest ">
+            <div className="text-3xl uppercase">
+              {payment?.va_numbers[0]?.bank}
             </div>
-          ) : (
-            <img src={preview} alt="" className="ml-6 max-h-28  rounded-lg " />
-          )}
+            <span className="text-sm">Virtual Account Number</span>
+            <div className="font-semibold text-2xl">
+              {payment?.va_numbers[0]?.va_number}
+            </div>
+          </div>
         </div>
+      </div>
+      {/* button */}
+      <div className="flex justify-center items-center gap-8">
+        <Button name={"Home"} className={"md:w-1/6"} to={"/"} />
         <Button
-          name={"Create Order"}
-          classname={"mt-10"}
-          onClick={handlePayment}
+          name={"Invoice"}
+          className={"md:w-1/6"}
+          to={`/invoice/${orderId}`}
         />
       </div>
     </div>

@@ -1,5 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
-import Sidebar from "./components/account/Sidebar";
+import { createBrowserRouter, useNavigate } from "react-router-dom";
 import Address from "./components/account/Address";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -10,11 +9,19 @@ import Order from "./pages/Order";
 import PaymentUser from "./pages/PaymentUser";
 import Profile from "./components/account/Profile";
 import NewAddress from "./components/account/NewAddress";
+import DeliveryAddress from "./pages/DeliveryAddress";
+import { AuthMiddleware } from "./middleware/AuthMiddleware";
+import CartMiddleware from "./middleware/CartMiddleware";
+import MyOrder from "./pages/MyOrder";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Homepage />,
+    element: (
+      <AuthMiddleware>
+        <Homepage />
+      </AuthMiddleware>
+    ),
   },
   //   auth
   {
@@ -28,21 +35,55 @@ const router = createBrowserRouter([
   //   Orders
   {
     path: "/cart",
-    element: <Order />,
+    element: (
+      <AuthMiddleware>
+        <Order />,
+      </AuthMiddleware>
+    ),
   },
   {
-    path: "/payment/:id",
-    element: <PaymentUser />,
+    path: "/delivery-address",
+    element: (
+      <AuthMiddleware>
+        <CartMiddleware>
+          <DeliveryAddress />
+        </CartMiddleware>
+      </AuthMiddleware>
+    ),
   },
   {
-    path: "/invoice/:id",
-    element: <InvoiceOrder />,
+    path: "/payment/:orderId",
+    element: (
+      <AuthMiddleware>
+        <PaymentUser />
+      </AuthMiddleware>
+    ),
+  },
+  {
+    path: "/invoice/:order_id",
+    element: (
+      <AuthMiddleware>
+        <InvoiceOrder />
+      </AuthMiddleware>
+    ),
+  },
+  {
+    path: "/my-order",
+    element: (
+      <AuthMiddleware>
+        <MyOrder />
+      </AuthMiddleware>
+    ),
   },
   //   Accoutn Setting
   {
     path: "/account-settings",
 
-    element: <AccountSetting />,
+    element: (
+      <AuthMiddleware>
+        <AccountSetting />
+      </AuthMiddleware>
+    ),
     children: [
       { path: "", element: <Profile /> },
       {

@@ -4,8 +4,6 @@ import React from "react";
 import NavigateBack from "./atom/NavigateBack";
 import AddCounter from "../assets/icons/AddCounter.png";
 import Minus from "../assets/icons/Minus.png";
-import Burger1 from "../assets/images/Burger1.png";
-import Button from "./atom/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { decrementCart, getCurrentCart, incrementCart, updateCart } from "../features/cartSlice";
 import CartNull from "./CartNull";
